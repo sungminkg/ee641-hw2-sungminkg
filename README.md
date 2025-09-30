@@ -26,7 +26,7 @@ train, evaluation, visualization code in ***experiments.ipynb***
 
 - Problem 1:
 Implemented a simplified GAN for font image generation, analyzed mode collapse, and applied feature matching as a stabilization technique. Results include quantitative mode coverage scores and qualitative visualizations.
-* Saved models, visualizations for each models - vanilla and fixed *
+## Saved models, visualizations for each models - vanilla and fixed ##
 - Problem 2:
 Implemented a hierarchical VAE with low- and high-level latent variables for drum pattern generation. Used KL annealing to mitigate posterior collapse. Explored creative experiments such as genre blending, complexity control, humanization, and style consistency.
 Results, models, and visualizations are saved under each problem’s results/ directory.
