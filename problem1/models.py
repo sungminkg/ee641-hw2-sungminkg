@@ -19,24 +19,20 @@ class Generator(nn.Module):
         self.z_dim = z_dim
         self.conditional = conditional
         
-        # Calculate input dimension
         input_dim = z_dim + (num_classes if conditional else 0)
         
-        # Architecture proven to work well for this task:
-        # Project and reshape: z → 7×7×128
         self.project = nn.Sequential(
             nn.Linear(input_dim, 128 * 7 * 7),
             nn.BatchNorm1d(128 * 7 * 7),
             nn.ReLU(True)
         )
         
-        # Upsample: 7×7×128 → 14×14×64 → 28×28×1
         self.main = nn.Sequential(
-            nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  # 7→14
+            nn.ConvTranspose2d(128, 64, kernel_size=4, stride=2, padding=1),  
             nn.BatchNorm2d(64),
             nn.ReLU(True),
             
-            nn.ConvTranspose2d(64, 1, kernel_size=4, stride=2, padding=1),    # 14→28
+            nn.ConvTranspose2d(64, 1, kernel_size=4, stride=2, padding=1),    
             nn.Tanh()  # Output in [-1, 1]
         )
     
@@ -59,7 +55,7 @@ class Generator(nn.Module):
             z = torch.cat([z, class_label], dim=1)
         
         out = self.project(z)
-        out = out.view(-1, 128, 7, 7)  # reshape to image grid
+        out = out.view(-1, 128, 7, 7)  
         img = self.main(out)
         return img
     
@@ -77,23 +73,22 @@ class Discriminator(nn.Module):
             # 28×28×1 → 14×14×64 → 7×7×128 → 3×3×256
             # Use Conv2d with appropriate stride
             # LeakyReLU(0.2) and Dropout2d(0.25)
-            nn.Conv2d(1, 64, kernel_size=4, stride=2, padding=1),   # 28→14
+            nn.Conv2d(1, 64, kernel_size=4, stride=2, padding=1),   
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout2d(0.25),
             
-            nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1), # 14→7
+            nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout2d(0.25),
             
-            nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1), # 7→3
+            nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1), 
             nn.BatchNorm2d(256),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Dropout2d(0.25)
         )
         
-        # Calculate feature dimension after convolutions
-        feature_dim = 256 * 3 * 3  # Adjust based on your architecture
+        feature_dim = 256 * 3 * 3 
         
         self.classifier = nn.Sequential(
             nn.Linear(feature_dim + (num_classes if conditional else 0), 1),
@@ -109,7 +104,7 @@ class Discriminator(nn.Module):
         """
         # TODO: Extract features, flatten, concatenate class if conditional
         feat = self.features(img)
-        feat = feat.view(feat.size(0), -1)  # flatten
+        feat = feat.view(feat.size(0), -1)  
         
         if self.conditional and class_label is not None:
             feat = torch.cat([feat, class_label], dim=1)
