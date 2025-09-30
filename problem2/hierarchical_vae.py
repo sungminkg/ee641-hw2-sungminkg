@@ -25,11 +25,11 @@ class HierarchicalDrumVAE(nn.Module):
         # Encoder: pattern → z_low → z_high
         # We use 1D convolutions treating the pattern as a sequence
         self.encoder_low = nn.Sequential(
-            nn.Conv1d(9, 32, kernel_size=3, padding=1),  # [16, 9] → [16, 32]
+            nn.Conv1d(9, 32, kernel_size=3, padding=1), 
             nn.ReLU(),
-            nn.Conv1d(32, 64, kernel_size=3, stride=2, padding=1),  # → [8, 64]
+            nn.Conv1d(32, 64, kernel_size=3, stride=2, padding=1),  
             nn.ReLU(),
-            nn.Conv1d(64, 128, kernel_size=3, stride=2, padding=1),  # → [4, 128]
+            nn.Conv1d(64, 128, kernel_size=3, stride=2, padding=1), 
             nn.ReLU(),
             nn.Flatten()  # → [512]
         )
@@ -67,12 +67,12 @@ class HierarchicalDrumVAE(nn.Module):
         )
         
         self.decoder_conv = nn.Sequential(
-            nn.Unflatten(1, (128, 4)),                  # [batch, 128, 4]
-            nn.ConvTranspose1d(128, 64, kernel_size=4, stride=2, padding=1),  # → [batch, 64, 8]
+            nn.Unflatten(1, (128, 4)),                
+            nn.ConvTranspose1d(128, 64, kernel_size=4, stride=2, padding=1),  
             nn.ReLU(),
-            nn.ConvTranspose1d(64, 32, kernel_size=4, stride=2, padding=1),   # → [batch, 32, 16]
+            nn.ConvTranspose1d(64, 32, kernel_size=4, stride=2, padding=1), 
             nn.ReLU(),
-            nn.Conv1d(32, 9, kernel_size=3, padding=1)  # → [batch, 9, 16]
+            nn.Conv1d(32, 9, kernel_size=3, padding=1)  
         )
 
         
@@ -87,7 +87,6 @@ class HierarchicalDrumVAE(nn.Module):
             mu_low, logvar_low: Parameters for q(z_low|x)
             mu_high, logvar_high: Parameters for q(z_high|z_low)
         """
-        # Reshape for Conv1d: [batch, 16, 9] → [batch, 9, 16]
         x = x.transpose(1, 2).float()
         
         # TODO: Encode to z_low parameters
