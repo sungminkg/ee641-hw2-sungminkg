@@ -44,7 +44,6 @@ def train_gan(generator, discriminator, data_loader, num_epochs=100, device='cud
             batch_size = real_images.size(0)
             real_images = real_images.to(device)
             
-            # Labels for loss computation
             real_labels = torch.ones(batch_size, 1).to(device)
             fake_labels = torch.zeros(batch_size, 1).to(device)
             
@@ -73,7 +72,6 @@ def train_gan(generator, discriminator, data_loader, num_epochs=100, device='cud
             fake_images = generator(z)
             outputs = discriminator(fake_images)
             
-            # Generator wants discriminator to classify fake as real
             g_loss = criterion(outputs, real_labels)
             g_loss.backward()
             g_optimizer.step()
